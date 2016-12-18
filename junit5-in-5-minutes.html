@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <title>JUnit 5 in 5 minutes by mihaianghel</title>
+</head>
+
+<body>
+<div id="container">
+    <div class="inner">
+        <header>
+            <h1><a href="index.html">mihaianghel</a></h1>
+            <h2>There is nothing serious here</h2>
+        </header>
+        <hr>
+        <section id="main_content">
+
+            <h1>
+                <a id="title" class="anchor" href="#title" aria-hidden="true">
+                    <span aria-hidden="true" class="octicon octicon-link"></span>
+                </a>JUnit 5 in 5 minutes
+            </h1>
+            
+            <h6>
+                <p>Sunday, December 18, 2016</p>
+            </h6>
+
+            <p>JUnit 5 is the younger, but more experienced, brother of JUnit 4 and enables the next generation of testing,
+                offering an improved platform for developing unit tests and keeping backwards compatibility with the code
+                written in version 4. Milestone 3 has been released in November 2016, so the framework is still being baked.
+                According to the development team, a GA release is planned for Q1 2017. Until then, let's peep through the keyhole
+                and check what's new.
+            </p>
+            
+            <h3>
+                <a id="annotations" class="anchor" href="#annotations" aria-hidden="true">
+                    <span aria-hidden="true" class="octicon octicon-link"></span>
+                </a>1. Annotations
+            </h3>
+            <p>Most of the annotations have been renamed and moved from <code>org.junit</code> package
+                to <code>org.junit.juniper.api</code>.
+            <table style="width:100%">
+                <tr>
+                    <th>JUnit 4</th>
+                    <th>JUnit 5</th>
+                </tr>
+                <tr>
+                    <td><code>@Before</code></td>
+                    <td><code>@BeforeEach</code></td>
+                </tr>
+                <tr>
+                    <td><code>@After</code></td>
+                    <td><code>@AfterEach</code></td>
+                </tr>
+                <tr>
+                    <td><code>@BeforeClass</code></td>
+                    <td><code>@BeforeAll</code></td>
+                </tr>
+                <tr>
+                    <td><code>@AfterClass</code></td>
+                    <td><code>@AfterAll</code></td>
+                </tr>
+                <tr>
+                    <td><code>@Ignored</code></td>
+                    <td><code>@Disabled("reason")</code></td>
+                </tr>
+                <tr>
+                    <td><code>@RunWith</code></td>
+                    <td><code>@ExtendWith</code></td>
+                </tr>
+            </table>
+            </p>
+
+            <h3>
+                <a id="assertions" class="anchor" href="#assertions" aria-hidden="true">
+                    <span aria-hidden="true" class="octicon octicon-link"></span>
+                </a>2. Assertions
+            </h3>
+            <p>The team has added three improvements around the assertions and moved them from <code>org.junit.Assert</code>
+                package to <code>org.junit.jupiter.api.Assertions</code>
+                <br>
+                <br>a) The error message to be displayed in case of failed assertion is the last one in the list
+                <br>&emsp;<code>assertEquals(expected, actual, "error message");</code>
+                <br>
+                <br>b) Lambda expressions
+                <br>&emsp;<code>assertTrue(false, () -> "Error. Expected true");</code>
+                <br>The above example is very trivial but the lambda expression is lazily evaluated which saves time and resources in case
+                of an expensive message construction logic.
+                <br>
+                <br>c) Multiple assertions
+                <br>&emsp;<code>assertAll("Person",</code>
+                <br>&emsp;<code>&emsp;() -> assertEquals("John", person.getFirstName()),</code>
+                <br>&emsp;<code>&emsp;() -> assertEquals("Doe", person.getSurname()),</code>
+                <br>&emsp;<code>&emsp;() -> assertEquals("SW19 5HP", person.getPostCode()));</code>
+                <br>This addition is very useful because in the previous version of JUnit the execution stopped at the first failure and did not give
+                a complete overview of the assertions contained in that particular test. In case of error it will display:
+                <br>&emsp;<code>AssertionsTest.multipleAssertionsTest:24 Person (2 failures)</code>
+                <br>&emsp;<code>&emsp;expected: &lt;Doe&gt; but was: &lt;Toe&gt;</code>
+                <br>&emsp;<code>&emsp;expected: &lt;SW19 5HP&gt; but was: &lt;NW19 3RU&gt;</code>
+            </p>
+
+            <h3>
+                <a id="tagging-and-disabling" class="anchor" href="#assertions" aria-hidden="true">
+                    <span aria-hidden="true" class="octicon octicon-link"></span>
+                </a>3. Tagging and disabling test cases
+            </h3>
+            <p>
+                Unit tests can be tagged and/or disabled using the <code>@Tag</code> and <code>@Disabled</code> annotations
+                at class or method level
+            </p>
+
+            <h3>
+                <a id="assumptions" class="anchor" href="#assumptions" aria-hidden="true">
+                    <span aria-hidden="true" class="octicon octicon-link"></span>
+                </a>4. Assumptions
+            </h3>
+            <p>Assumptions are used in situations when assertions should be evaluated only if certain criteria are met:
+                <br>&emsp;<code>@Test</code>
+                <br>&emsp;<code>void shouldEvaluateSeniors() {</code>
+                <br>&emsp;<code>&emsp;assumeTrue(person.getAge > 65);</code>
+                <br>&emsp;<code>&emsp;assertAll("Person",</code>
+                <br>&emsp;<code>&emsp;&emsp;() -> assertEquals("John", person.getFirstName()),</code>
+                <br>&emsp;<code>&emsp;&emsp;() -> assertEquals("Doe", person.getSurname()));</code>
+                <br>&emsp;<code>}</code>
+
+            </p>
+
+            <h3>
+                <a id="exceptions" class="anchor" href="#exceptions" aria-hidden="true">
+                    <span aria-hidden="true" class="octicon octicon-link"></span>
+                </a>5. Exceptions
+            </h3>
+            <p>Exception testing has been ignored most of the times, or it was done superficially. The good news is that JUnit 5 enables
+                easier testing of type and message. This was done in JUnit 4:
+                <br>&emsp;<code>@Test(expected = RuntimeException.class)</code>
+                <br>&emsp;<code>public void testException() {</code>
+                <br>&emsp;<code>&emsp;target.throw();</code>
+                <br>&emsp;<code>}</code>
+                <br>
+                <br>And this is how it's done now:
+                <br>&emsp;<code>@Test</code>
+                <br>&emsp;<code>void testException() {</code>
+                <br>&emsp;<code>&emsp;Throwable e = assertThrows(RuntimeException.class, () -> target.throw());</code>
+                <br>&emsp;<code>&emsp;assertEquals("message", e.getMessage());</code>
+                <br>&emsp;<code>}</code>
+
+            </p>
+
+            <h3>
+                <a id="nested-tests" class="anchor" href="#nested-tests" aria-hidden="true">
+                    <span aria-hidden="true" class="octicon octicon-link"></span>
+                </a>6. Nested tests
+            </h3>
+            <p>JUnit 5 added nested tests to its toolbox in order to express complex relationships among different groups
+                of tests. Also, it enables a BDD style of developing unit tests by annotating the test methods and classes
+                with <code>@DisplayName</code> and assigning a description using a 'human-readable' language. The inner
+                test classes need to be marked with <code>@Nested</code> in order to enable the wiring. The official
+                documentation offers a very good <a href="http://junit.org/junit5/docs/current/user-guide/#writing-tests-nested">example</a>.
+            </p>
+
+            <h3>
+                <a id="nested-tests" class="anchor" href="#nested-tests" aria-hidden="true">
+                    <span aria-hidden="true" class="octicon octicon-link"></span>
+                </a>7. Dynamic testing
+            </h3>
+            <p>Unit tests developed with version 4 of the framework are static test in the sense that they are fully defined at compile time.
+                The new idea brought in by the latest version, enables a new kind of test - dynamic test - which is generated at runtime by
+                a factory method annotated with <code>@TestFactory</code>.
+                <br>
+                The method marked with <code>@TestFactory</code> is not a test method per se, but it's a factory for dynamic tests
+                and returns a <code>Stream</code>, <code>Collection</code> or <code>Iterable</code> of <code>DynamicTest</code> instances.
+                The <code>DynamicTest</code> is a <code>@FunctionalInterface</code> which means that the description and implementation
+                of the test case can be provided as a lambda expression, like below:
+                <br>&emsp;<code>@TestFactory</code>
+                <br>&emsp;<code>Collection&lt;DynamicTest&gt; generateDynamicTests() {</code>
+                <br>&emsp;<code>&emsp;return Arrays.asList(</code>
+                <br>&emsp;<code>&emsp;&emsp;dynamicTest("Test status", () -> assertTrue(p.isMarried())),</code>
+                <br>&emsp;<code>&emsp;&emsp;dynamicTest("Test age", () -> assertEquals(25, p.getAge()))</code>
+                <br>&emsp;<code>&emsp;);</code>
+                <br>&emsp;<code>}</code>
+            </p>
+
+            <h3>
+                <a id="data-driven-testing" class="anchor" href="#data-driven-testing" aria-hidden="true">
+                    <span aria-hidden="true" class="octicon octicon-link"></span>
+                </a>8. Data driven testing
+            </h3>
+            <p>Data driven testing allows the execution of multiple iterations of the same test with different input by avoiding
+                code duplication. This feature is called 'table driven testing' in other frameworks and languages like Go, Spock
+                or Cucumber. In JUnit 5 one can implement this using a <code>@TestFactory</code> by streaming over a collection
+                of test data and create a dynamic test for each entry like below:
+
+                <br>&emsp;<code>@TestFactory</code>
+                <br>&emsp;<code>Collection&lt;DynamicTest&gt; generateDynamicTests() {</code>
+                <br>&emsp;<code>&emsp;return testData()</code>
+                <br>&emsp;<code>&emsp;&emsp;.stream()</code>
+                <br>&emsp;<code>&emsp;&emsp;.map(d -> dynamicTest("Data:" + d, () -> {</code>
+                <br>&emsp;<code>&emsp;&emsp;&emsp;&emsp;/** implementation */</code>
+                <br>&emsp;<code>&emsp;&emsp;}))</code>
+                <br>&emsp;<code>&emsp;.collect(Collectors.toList());</code>
+                <br>&emsp;<code>}</code>
+            </p>
+
+            <h3>
+                <a id="Extensions" class="anchor" href="#extensions" aria-hidden="true">
+                    <span aria-hidden="true" class="octicon octicon-link"></span>
+                </a>9. Extensions
+            </h3>
+            <p>As the name states, this feature allows the developers to extend their test code in order to add logic
+                to the tests in a non-invasive manner and to manage the test's lifecycle. This can be implemented with
+                the so called extension points which come out-of-the-box in JUnit 5. From a technical point of view, the
+                extension points are interfaces. The implementing class is called an extension and defines the behaviour
+                of the extension point. Extensions can be registered using the <code>@ExtendWith</code> annotation at
+                method or class level.
+                <br>
+                <br>Some of the extension points offered by JUnit 5 are:
+                <table style="width:100%">
+                    <tr>
+                        <th>Extension point</th>
+                        <th>Role</th>
+                    </tr>
+                    <tr>
+                        <td><code>TestInstancePostProcessor</code></td>
+                        <td>Define behaviour to post process the test instance.</td>
+                    </tr>
+                    <tr>
+                        <td><code>ContainerExecutionCondition</code></td>
+                        <td>Define the API for conditional container execution</td>
+                    </tr>
+                    <tr>
+                        <td><code>ParameterResolver</code></td>
+                        <td>Define the API for dynamically resolving parameters at runtime</td>
+                    </tr>
+                    <tr>
+                        <td><code>TestExecutionExceptionHandler</code></td>
+                        <td>Define the API for handling exceptions thrown during test execution</td>
+                    </tr>
+                    <tr>
+                        <td><code>BeforeAllCallback, BeforeEachCallback, AfterAllCallback, AfterEachCallback</code></td>
+                        <td>Define APIs for lifecycle management</td>
+                    </tr>
+                </table>
+            </p>
+
+            <p>
+                A very good <a href="http://junit.org/junit5/docs/current/user-guide/#extensions-lifecycle-callbacks">example</a>
+                that illustrates the usage of extensions can be found in the official documentation where execution
+                times are measured using extensions.
+            </p>
+
+            <p>
+                After all, JUnit 5 is still in it's early days. Probably the best idea would be to give it a go and see
+                if it works for your project and your needs. Otherwise you might direct your attention to other frameworks
+                which are less verbose and more mature, like Spock.
+            </p>
+
+            <p>Happy coding!</p>
+        </section>
+
+        <footer>
+            This page was generated by <a href="https://pages.github.com">GitHub Pages</a>. Tactile theme by <a
+                href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+    </div>
+</div>
+</body>
+</html>
